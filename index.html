@@ -1,0 +1,2599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anypoint Exchange - LLM Proxies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00a2df;
+            --primary-dark: #0081b3;
+            --success: #52c41a;
+            --warning: #faad14;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-muted: #999;
+            --bg-elevated: #ffffff;
+            --bg-base: #f5f5f5;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-base);
+        }
+
+        .header {
+            background-color: #16325c;
+            color: white;
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu a {
+            color: #b3c7d6;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: white;
+        }
+
+        .nav-menu a.active {
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-expenses {
+            background-color: transparent;
+            color: #b3c7d6;
+            border: 1px solid #b3c7d6;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-expenses:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            color: white;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #b3c7d6;
+            font-size: 14px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #16325c 0%, #0d1f3a 100%);
+            color: white;
+            padding: var(--space-2xl) 20px;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #b3c7d6;
+            margin-bottom: var(--space-xl);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 162, 223, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 28px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .asset-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .asset-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .asset-title-section {
+            flex: 1;
+        }
+
+        .asset-title {
+            font-size: 28px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .asset-meta {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: var(--space-sm);
+            background: var(--bg-base);
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-toggle-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .view-toggle-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .asset-body {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* Filters */
+        .filters-container {
+            padding: 20px;
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 0;
+        }
+
+        .search-section {
+            margin-bottom: 15px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 40px;
+            padding: 8px 12px 8px 40px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .filter-select {
+            height: 40px;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:hover {
+            border-color: var(--primary);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-clear-filters {
+            height: 40px;
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid #d9d9d9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-clear-filters:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Card View */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+            padding: var(--space-lg) 0;
+        }
+
+        .proxy-card {
+            background: white;
+            border-radius: 8px;
+            padding: var(--space-lg);
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .proxy-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+
+        .proxy-card-header {
+            margin-bottom: var(--space-md);
+        }
+
+        .provider-logos {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .provider-logo {
+            width: 50px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 10px;
+            color: white;
+        }
+
+        .provider-logo.openai {
+            background: linear-gradient(135deg, #10a37f 0%, #0d8a6c 100%);
+        }
+
+        .provider-logo.gemini {
+            background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+        }
+
+        .provider-logo.claude {
+            background: linear-gradient(135deg, #cc785c 0%, #b5674a 100%);
+        }
+
+        .proxy-card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .proxy-card-routing {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        .proxy-card-stats {
+            display: flex;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-md);
+            padding: var(--space-md) 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .stat-icon {
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .proxy-card-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .btn-card-action {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-card-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-card-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-card-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-card-secondary:hover {
+            background-color: #f0f9ff;
+        }
+
+        /* Table View */
+        .table-wrapper {
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background-color: #f9f9f9;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .model-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background-color: #e6f7ff;
+            color: #0066cc;
+        }
+
+        .btn-request {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-request:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .provider-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .provider-tag {
+            background-color: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 70%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .close {
+            color: #999;
+            font-size: 28px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-continue {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-continue:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-cancel {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid #d9d9d9;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .form-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .form-table td {
+            padding: 12px 0;
+            border: none;
+        }
+
+        .form-table tr:hover {
+            background-color: transparent;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 200px;
+            padding-right: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .credentials-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .credentials-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .copy-btn:hover {
+            background-color: #e6e6e6;
+            border-color: var(--primary);
+        }
+
+        .copy-btn.copied {
+            background-color: #d4f4dd;
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .credentials-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .curl-code {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 20px;
+        }
+
+        .curl-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .curl-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        /* Models Page Styles */
+        #modelsPage {
+            margin-top: 0;
+            padding-top: 30px;
+        }
+
+        .models-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .models-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .models-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .btn-back {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid #d9d9d9;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .models-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: var(--space-xl);
+        }
+
+        .models-sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: var(--space-lg);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-lg);
+        }
+
+        .filter-section {
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filter-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .filter-section-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .checkbox-label:hover {
+            color: var(--text-primary);
+        }
+
+        .model-filter-checkbox {
+            cursor: pointer;
+        }
+
+        .btn-clear-all-filters {
+            width: 100%;
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid #d9d9d9;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: var(--space-md);
+        }
+
+        .btn-clear-all-filters:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .models-main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .models-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-md);
+            background: white;
+            padding: var(--space-lg);
+            border-radius: 8px;
+        }
+
+        .models-search-bar {
+            flex: 1;
+        }
+
+        .models-search-input {
+            width: 100%;
+            height: 40px;
+            padding: 8px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .models-search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .models-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .models-count {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .models-sort-select {
+            height: 40px;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .models-sort-select:hover {
+            border-color: var(--primary);
+        }
+
+        .models-sort-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .model-card {
+            background: white;
+            border-radius: 8px;
+            padding: var(--space-lg);
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .model-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .model-card-header {
+            margin-bottom: var(--space-md);
+        }
+
+        .model-provider {
+            margin-bottom: var(--space-sm);
+        }
+
+        .model-card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .model-card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .model-card-specs {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            padding: var(--space-md) 0;
+            margin-bottom: var(--space-md);
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .spec-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .spec-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .model-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+
+        .model-tag {
+            background-color: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Expenses Page Styles */
+        #expensesPage {
+            margin-top: 0;
+            padding-top: 30px;
+        }
+
+        .expenses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .expenses-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .expenses-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .expenses-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: var(--space-lg);
+            border: 1px solid #e0e0e0;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .summary-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .summary-change {
+            font-size: 13px;
+            margin-top: var(--space-xs);
+        }
+
+        .summary-change.positive {
+            color: var(--success);
+        }
+
+        .summary-change.negative {
+            color: #f5222d;
+        }
+
+        .expenses-content {
+            background: white;
+            border-radius: 8px;
+            padding: var(--space-xl);
+            border: 1px solid #e0e0e0;
+        }
+
+        .expenses-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-period {
+            padding: 8px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .expenses-chart {
+            margin-bottom: var(--space-xl);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 300px;
+            gap: var(--space-sm);
+            padding: var(--space-lg) 0;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .expenses-breakdown {
+            margin-top: var(--space-xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .breakdown-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-lg);
+        }
+
+        .breakdown-table {
+            width: 100%;
+        }
+
+        .breakdown-table th {
+            text-align: left;
+            padding: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 14px;
+            background-color: #f9f9f9;
+        }
+
+        .breakdown-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .breakdown-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .provider-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .expense-amount {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="#" class="logo">Anypoint Platform</a>
+                <nav>
+                    <ul class="nav-menu">
+                        <li><a href="#">Design Center</a></li>
+                        <li><a href="#" class="active">Exchange</a></li>
+                        <li><a href="#">Runtime Manager</a></li>
+                        <li><a href="#">API Manager</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="header-right">
+                <a href="#expenses" class="btn-expenses" id="viewExpensesBtn">💰 View Expenses</a>
+                <div class="user-info">
+                    <span>Enterprise AI</span>
+                    <div class="user-avatar">EA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">LLM Proxy Catalog</h1>
+            <p class="hero-subtitle">
+                Unified, governed access to enterprise AI models across providers
+                with built-in routing, monitoring, and cost controls
+            </p>
+            <div class="hero-actions">
+                <a href="#catalog" class="btn-primary" id="exploreCatalogBtn">Explore Catalog</a>
+                <a href="#models" class="btn-secondary" id="exploreModelsBtn">Explore Models</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="catalog">
+        <div class="asset-card">
+            <div class="asset-header">
+                <div class="asset-title-section">
+                    <h2 class="asset-title">Browse LLM Proxies</h2>
+                    <div class="asset-meta">
+                        Organization: Enterprise AI • Type: API Catalog • Published: Feb 28, 2026
+                    </div>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-toggle-btn active" id="cardViewBtn">
+                        <span>📇</span> Cards
+                    </button>
+                    <button class="view-toggle-btn" id="tableViewBtn">
+                        <span>📊</span> Table
+                    </button>
+                </div>
+            </div>
+
+            <div class="asset-body">
+                <div class="filters-container">
+                    <div class="search-section">
+                        <div class="search-wrapper">
+                            <span class="search-icon">🔍</span>
+                            <input type="text"
+                                   id="searchInput"
+                                   class="search-input"
+                                   placeholder="Search proxies by name...">
+                        </div>
+                    </div>
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label for="providerFilter" class="filter-label">Provider</label>
+                            <select id="providerFilter" class="filter-select">
+                                <option value="all">All Providers</option>
+                                <option value="OpenAI">OpenAI</option>
+                                <option value="Gemini">Gemini</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="routingFilter" class="filter-label">Routing Strategy</label>
+                            <select id="routingFilter" class="filter-select">
+                                <option value="all">All Strategies</option>
+                                <option value="Model based">Model based</option>
+                                <option value="Semantic">Semantic</option>
+                                <option value="Latency based">Latency based</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="statusFilter" class="filter-label">Status</label>
+                            <select id="statusFilter" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="Active">Active</option>
+                            </select>
+                        </div>
+                        <button id="clearFiltersBtn" class="btn-clear-filters" style="display: none;">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card View -->
+                <div id="cardView" class="cards-grid">
+                    <div class="proxy-card" data-proxy-name="LLM Proxy for Text Models" data-providers="OpenAI,Gemini" data-routing="Model based" data-status="Active">
+                        <div class="proxy-card-header">
+                            <div class="provider-logos">
+                                <div class="provider-logo openai" title="OpenAI">OpenAI</div>
+                                <div class="provider-logo gemini" title="Gemini">Gemini</div>
+                            </div>
+                            <h3 class="proxy-card-title">LLM Proxy for Text Models</h3>
+                            <div class="proxy-card-routing">🎯 Model based routing</div>
+                        </div>
+                        <div class="proxy-card-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">125ms</span> avg
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">✅</span>
+                                <span class="stat-value">99.9%</span> uptime
+                            </div>
+                        </div>
+                        <div class="proxy-card-actions">
+                            <button class="btn-card-action btn-card-primary btn-access">Request Access</button>
+                            <button class="btn-card-action btn-card-secondary btn-curl">View cURL</button>
+                        </div>
+                    </div>
+
+                    <div class="proxy-card" data-proxy-name="LLM Proxy for Image Models" data-providers="Gemini" data-routing="Semantic" data-status="Active">
+                        <div class="proxy-card-header">
+                            <div class="provider-logos">
+                                <div class="provider-logo gemini" title="Gemini">Gemini</div>
+                            </div>
+                            <h3 class="proxy-card-title">LLM Proxy for Image Models</h3>
+                            <div class="proxy-card-routing">🧠 Semantic routing</div>
+                        </div>
+                        <div class="proxy-card-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">180ms</span> avg
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">✅</span>
+                                <span class="stat-value">99.8%</span> uptime
+                            </div>
+                        </div>
+                        <div class="proxy-card-actions">
+                            <button class="btn-card-action btn-card-primary btn-access">Request Access</button>
+                            <button class="btn-card-action btn-card-secondary btn-curl">View cURL</button>
+                        </div>
+                    </div>
+
+                    <div class="proxy-card" data-proxy-name="LLM Proxy for Text Models" data-providers="OpenAI,Gemini" data-routing="Latency based" data-status="Active">
+                        <div class="proxy-card-header">
+                            <div class="provider-logos">
+                                <div class="provider-logo openai" title="OpenAI">OpenAI</div>
+                                <div class="provider-logo gemini" title="Gemini">Gemini</div>
+                            </div>
+                            <h3 class="proxy-card-title">LLM Proxy for Text Models</h3>
+                            <div class="proxy-card-routing">⏱️ Latency based routing</div>
+                        </div>
+                        <div class="proxy-card-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">98ms</span> avg
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">✅</span>
+                                <span class="stat-value">99.9%</span> uptime
+                            </div>
+                        </div>
+                        <div class="proxy-card-actions">
+                            <button class="btn-card-action btn-card-primary btn-access">Request Access</button>
+                            <button class="btn-card-action btn-card-secondary btn-curl">View cURL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table View -->
+                <div id="tableView" class="table-wrapper" style="display: none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>LLM Proxy</th>
+                                <th>Providers</th>
+                                <th>Routing strategy</th>
+                                <th>Status</th>
+                                <th>Access</th>
+                                <th>cURL request samples</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="model-name">LLM Proxy for Text Models</td>
+                                <td>
+                                    <div class="provider-list">
+                                        <span class="provider-tag">OpenAI</span>
+                                        <span class="provider-tag">Gemini</span>
+                                    </div>
+                                </td>
+                                <td>Model based</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td><button class="btn-request btn-access">Request Access</button></td>
+                                <td><button class="btn-request btn-curl">View</button></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">LLM Proxy for Image Models</td>
+                                <td>
+                                    <div class="provider-list">
+                                        <span class="provider-tag">Gemini</span>
+                                    </div>
+                                </td>
+                                <td>Semantic</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td><button class="btn-request btn-access">Request Access</button></td>
+                                <td><button class="btn-request btn-curl">View</button></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">LLM Proxy for Text Models</td>
+                                <td>
+                                    <div class="provider-list">
+                                        <span class="provider-tag">OpenAI</span>
+                                        <span class="provider-tag">Gemini</span>
+                                    </div>
+                                </td>
+                                <td>Latency based</td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td><button class="btn-request btn-access">Request Access</button></td>
+                                <td><button class="btn-request btn-curl">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noResults" class="no-results" style="display: none;">
+                    <p>No proxies found matching your filters.</p>
+                    <p class="no-results-hint">Try adjusting your search criteria or <a href="#" id="clearFromMessage">clear all filters</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Models Page -->
+    <div class="container" id="modelsPage" style="display: none;">
+        <div class="models-header">
+            <div class="models-title-section">
+                <h1 class="models-title">Available Models</h1>
+                <p class="models-subtitle">Browse and compare AI models across providers</p>
+            </div>
+            <div class="models-actions">
+                <button class="btn-back" id="backToCatalog">← Back to Catalog</button>
+            </div>
+        </div>
+
+        <div class="models-content">
+            <aside class="models-sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Filters</h3>
+
+                    <div class="filter-section">
+                        <label class="filter-section-label">Provider</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="provider" value="OpenAI" checked>
+                                <span>OpenAI</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="provider" value="Google" checked>
+                                <span>Google (Gemini)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="provider" value="Anthropic" checked>
+                                <span>Anthropic (Claude)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <label class="filter-section-label">Capabilities</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="capability" value="text">
+                                <span>Text Generation</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="capability" value="vision">
+                                <span>Vision</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="capability" value="code">
+                                <span>Code</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <label class="filter-section-label">Context Window</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="context" value="small">
+                                <span>&lt; 32K tokens</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="context" value="medium">
+                                <span>32K - 128K tokens</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="model-filter-checkbox" data-filter="context" value="large">
+                                <span>&gt; 128K tokens</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn-clear-all-filters" id="clearAllModelFilters">Clear All Filters</button>
+                </div>
+            </aside>
+
+            <main class="models-main">
+                <div class="models-toolbar">
+                    <div class="models-search-bar">
+                        <input type="text" id="modelsSearch" class="models-search-input" placeholder="Search models...">
+                    </div>
+                    <div class="models-controls">
+                        <span class="models-count" id="modelsCount">12 models</span>
+                        <select class="models-sort-select" id="modelsSort">
+                            <option value="popular">Most Popular</option>
+                            <option value="newest">Newest</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="context-high">Context: High to Low</option>
+                            <option value="latency-low">Latency: Low to High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="models-grid" id="modelsGrid">
+                    <!-- GPT-4 Turbo -->
+                    <div class="model-card" data-provider="OpenAI" data-capabilities="text,code,vision" data-context="large" data-price="10">
+                        <div class="model-card-header">
+                            <div class="model-provider">
+                                <div class="provider-logo openai">OpenAI</div>
+                            </div>
+                            <h3 class="model-card-title">GPT-4 Turbo</h3>
+                            <p class="model-card-description">Most capable GPT-4 model with vision</p>
+                        </div>
+                        <div class="model-card-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Context</span>
+                                <span class="spec-value">128K tokens</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Pricing</span>
+                                <span class="spec-value">$10/$30 per 1M</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Latency</span>
+                                <span class="spec-value">~800ms</span>
+                            </div>
+                        </div>
+                        <div class="model-card-tags">
+                            <span class="model-tag">Text</span>
+                            <span class="model-tag">Vision</span>
+                            <span class="model-tag">Code</span>
+                        </div>
+                    </div>
+
+                    <!-- GPT-3.5 Turbo -->
+                    <div class="model-card" data-provider="OpenAI" data-capabilities="text,code" data-context="small" data-price="0.5">
+                        <div class="model-card-header">
+                            <div class="model-provider">
+                                <div class="provider-logo openai">OpenAI</div>
+                            </div>
+                            <h3 class="model-card-title">GPT-3.5 Turbo</h3>
+                            <p class="model-card-description">Fast and cost-effective model</p>
+                        </div>
+                        <div class="model-card-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Context</span>
+                                <span class="spec-value">16K tokens</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Pricing</span>
+                                <span class="spec-value">$0.5/$1.5 per 1M</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Latency</span>
+                                <span class="spec-value">~400ms</span>
+                            </div>
+                        </div>
+                        <div class="model-card-tags">
+                            <span class="model-tag">Text</span>
+                            <span class="model-tag">Code</span>
+                        </div>
+                    </div>
+
+                    <!-- Gemini Pro -->
+                    <div class="model-card" data-provider="Google" data-capabilities="text,code,vision" data-context="medium" data-price="0.5">
+                        <div class="model-card-header">
+                            <div class="model-provider">
+                                <div class="provider-logo gemini">Gemini</div>
+                            </div>
+                            <h3 class="model-card-title">Gemini Pro 1.5</h3>
+                            <p class="model-card-description">Google's advanced multimodal model</p>
+                        </div>
+                        <div class="model-card-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Context</span>
+                                <span class="spec-value">1M tokens</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Pricing</span>
+                                <span class="spec-value">$1.25/$5 per 1M</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Latency</span>
+                                <span class="spec-value">~600ms</span>
+                            </div>
+                        </div>
+                        <div class="model-card-tags">
+                            <span class="model-tag">Text</span>
+                            <span class="model-tag">Vision</span>
+                            <span class="model-tag">Code</span>
+                        </div>
+                    </div>
+
+                    <!-- Claude 3 Opus -->
+                    <div class="model-card" data-provider="Anthropic" data-capabilities="text,code,vision" data-context="large" data-price="15">
+                        <div class="model-card-header">
+                            <div class="model-provider">
+                                <div class="provider-logo claude">Claude</div>
+                            </div>
+                            <h3 class="model-card-title">Claude 3 Opus</h3>
+                            <p class="model-card-description">Most powerful Claude model</p>
+                        </div>
+                        <div class="model-card-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Context</span>
+                                <span class="spec-value">200K tokens</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Pricing</span>
+                                <span class="spec-value">$15/$75 per 1M</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Latency</span>
+                                <span class="spec-value">~900ms</span>
+                            </div>
+                        </div>
+                        <div class="model-card-tags">
+                            <span class="model-tag">Text</span>
+                            <span class="model-tag">Vision</span>
+                            <span class="model-tag">Code</span>
+                        </div>
+                    </div>
+
+                    <!-- Claude 3 Sonnet -->
+                    <div class="model-card" data-provider="Anthropic" data-capabilities="text,code,vision" data-context="large" data-price="3">
+                        <div class="model-card-header">
+                            <div class="model-provider">
+                                <div class="provider-logo claude">Claude</div>
+                            </div>
+                            <h3 class="model-card-title">Claude 3 Sonnet</h3>
+                            <p class="model-card-description">Balanced performance and speed</p>
+                        </div>
+                        <div class="model-card-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Context</span>
+                                <span class="spec-value">200K tokens</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Pricing</span>
+                                <span class="spec-value">$3/$15 per 1M</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Latency</span>
+                                <span class="spec-value">~500ms</span>
+                            </div>
+                        </div>
+                        <div class="model-card-tags">
+                            <span class="model-tag">Text</span>
+                            <span class="model-tag">Vision</span>
+                            <span class="model-tag">Code</span>
+                        </div>
+                    </div>
+
+                    <!-- Claude 3 Haiku -->
+                    <div class="model-card" data-provider="Anthropic" data-capabilities="text,code,vision" data-context="large" data-price="0.25">
+                        <div class="model-card-header">
+                            <div class="model-provider">
+                                <div class="provider-logo claude">Claude</div>
+                            </div>
+                            <h3 class="model-card-title">Claude 3 Haiku</h3>
+                            <p class="model-card-description">Fastest and most compact Claude model</p>
+                        </div>
+                        <div class="model-card-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Context</span>
+                                <span class="spec-value">200K tokens</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Pricing</span>
+                                <span class="spec-value">$0.25/$1.25 per 1M</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Latency</span>
+                                <span class="spec-value">~300ms</span>
+                            </div>
+                        </div>
+                        <div class="model-card-tags">
+                            <span class="model-tag">Text</span>
+                            <span class="model-tag">Vision</span>
+                            <span class="model-tag">Code</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="noModelsResults" class="no-results" style="display: none;">
+                    <p>No models found matching your criteria.</p>
+                    <p class="no-results-hint">Try adjusting your filters or <a href="#" id="clearModelFiltersFromMessage">clear all filters</a>.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Expenses Page -->
+    <div class="container" id="expensesPage" style="display: none;">
+        <div class="expenses-header">
+            <div class="expenses-title-section">
+                <h1 class="expenses-title">LLM Expenses</h1>
+                <p class="expenses-subtitle">Track your AI model usage and costs over time</p>
+            </div>
+            <div class="models-actions">
+                <button class="btn-back" id="backFromExpenses">← Back to Catalog</button>
+            </div>
+        </div>
+
+        <div class="expenses-summary">
+            <div class="summary-card">
+                <div class="summary-label">Current Month</div>
+                <div class="summary-value">$2,847</div>
+                <div class="summary-change positive">↑ 12% from last month</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Last 30 Days</div>
+                <div class="summary-value">$2,847</div>
+                <div class="summary-change positive">↑ 450K tokens</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total (6 Months)</div>
+                <div class="summary-value">$14,892</div>
+                <div class="summary-change">6.2M tokens used</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Avg. Daily Cost</div>
+                <div class="summary-value">$94</div>
+                <div class="summary-change">Based on last 30 days</div>
+            </div>
+        </div>
+
+        <div class="expenses-content">
+            <div class="expenses-chart-header">
+                <h2 class="chart-title">Monthly Expenses</h2>
+                <select class="chart-period">
+                    <option value="6m">Last 6 Months</option>
+                    <option value="3m">Last 3 Months</option>
+                    <option value="1y">Last Year</option>
+                </select>
+            </div>
+
+            <div class="expenses-chart">
+                <div class="chart-bars">
+                    <div class="bar-container">
+                        <div class="bar" style="height: 45%;">
+                            <span class="bar-value">$1,245</span>
+                        </div>
+                        <div class="bar-label">Oct</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 62%;">
+                            <span class="bar-value">$1,678</span>
+                        </div>
+                        <div class="bar-label">Nov</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 75%;">
+                            <span class="bar-value">$2,103</span>
+                        </div>
+                        <div class="bar-label">Dec</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 88%;">
+                            <span class="bar-value">$2,421</span>
+                        </div>
+                        <div class="bar-label">Jan</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 93%;">
+                            <span class="bar-value">$2,544</span>
+                        </div>
+                        <div class="bar-label">Feb</div>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar" style="height: 100%;">
+                            <span class="bar-value">$2,847</span>
+                        </div>
+                        <div class="bar-label">Mar</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expenses-breakdown">
+                <h3 class="breakdown-title">Expenses by Provider (Current Month)</h3>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Tokens Used</th>
+                            <th>Requests</th>
+                            <th>Avg. Cost/1K Tokens</th>
+                            <th>Total Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="provider-name">OpenAI</td>
+                            <td>1,245,678</td>
+                            <td>12,456</td>
+                            <td>$0.012</td>
+                            <td class="expense-amount">$1,495</td>
+                        </tr>
+                        <tr>
+                            <td class="provider-name">Google (Gemini)</td>
+                            <td>892,345</td>
+                            <td>8,923</td>
+                            <td>$0.008</td>
+                            <td class="expense-amount">$715</td>
+                        </tr>
+                        <tr>
+                            <td class="provider-name">Anthropic (Claude)</td>
+                            <td>745,123</td>
+                            <td>7,451</td>
+                            <td>$0.009</td>
+                            <td class="expense-amount">$637</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Access Modal -->
+    <div id="accessModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Request Access</h3>
+                <span class="close" id="closeAccessModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <table class="form-table">
+                    <tr>
+                        <td class="form-label">SLA Tier</td>
+                        <td>
+                            <select class="form-input" id="slaTier">
+                                <option value="">Select SLA Tier</option>
+                                <option value="gold">Gold (1M Tokens/month)</option>
+                                <option value="silver">Silver (500K Tokens/month)</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-label">Client Application Name</td>
+                        <td>
+                            <input type="text" class="form-input" id="appName" placeholder="Enter your application name">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelAccessModal">Cancel</button>
+                <button class="btn-continue">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credentials Modal -->
+    <div id="credentialsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Access Credentials</h3>
+                <span class="close" id="closeCredsModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <label class="credentials-label">Client ID</label>
+                    <div class="credentials-row">
+                        <input type="text" class="credentials-input" id="clientId" value="abc123def456ghi789jkl012mno345pqr" readonly>
+                        <button class="copy-btn" data-copy="clientId">
+                            <span>📋</span>
+                            <span class="copy-text">Copy</span>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="credentials-label">Client Secret</label>
+                    <div class="credentials-row">
+                        <input type="text" class="credentials-input" id="clientSecret" value="s3cr3t_k3y_xyz789abc123def456gh" readonly>
+                        <button class="copy-btn" data-copy="clientSecret">
+                            <span>📋</span>
+                            <span class="copy-text">Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-continue" id="doneBtn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- cURL Modal -->
+    <div id="curlModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">cURL Request Sample</h3>
+                <span class="close" id="closeCurlModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="curl-header">
+                    <span class="curl-title">Sample Request</span>
+                    <button class="copy-btn" id="copyCurlBtn">
+                        <span>📋</span>
+                        <span class="copy-text">Copy</span>
+                    </button>
+                </div>
+                <div class="curl-code" id="curlCode">curl --location '&lt;endpoint&gt;/responses' \
+--header 'Content-Type: application/json' \
+--header 'client_id: &lt;your_client_id&gt;' \
+--header 'client_secret: &lt;your_client_secret&gt;' \
+--data '{
+    "model": "openai/gpt-5-nano",
+    "input": "What is AI"
+}'</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-continue" id="closeCurlBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // View Toggle
+        const cardViewBtn = document.getElementById('cardViewBtn');
+        const tableViewBtn = document.getElementById('tableViewBtn');
+        const cardView = document.getElementById('cardView');
+        const tableView = document.getElementById('tableView');
+
+        cardViewBtn.addEventListener('click', () => {
+            cardViewBtn.classList.add('active');
+            tableViewBtn.classList.remove('active');
+            cardView.style.display = 'grid';
+            tableView.style.display = 'none';
+        });
+
+        tableViewBtn.addEventListener('click', () => {
+            tableViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('active');
+            tableView.style.display = 'block';
+            cardView.style.display = 'none';
+        });
+
+        // Modal functionality
+        const accessModal = document.getElementById('accessModal');
+        const credentialsModal = document.getElementById('credentialsModal');
+        const closeAccessModalBtn = document.getElementById('closeAccessModal');
+        const closeCredsModalBtn = document.getElementById('closeCredsModal');
+        const cancelAccessModalBtn = document.getElementById('cancelAccessModal');
+        const continueBtn = document.querySelector('.btn-continue');
+        const doneBtn = document.getElementById('doneBtn');
+        const requestBtns = document.querySelectorAll('.btn-access');
+
+        requestBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                accessModal.style.display = 'block';
+            });
+        });
+
+        closeAccessModalBtn.addEventListener('click', () => {
+            accessModal.style.display = 'none';
+        });
+
+        cancelAccessModalBtn.addEventListener('click', () => {
+            accessModal.style.display = 'none';
+        });
+
+        closeCredsModalBtn.addEventListener('click', () => {
+            credentialsModal.style.display = 'none';
+        });
+
+        doneBtn.addEventListener('click', () => {
+            credentialsModal.style.display = 'none';
+        });
+
+        // cURL Modal
+        const curlModal = document.getElementById('curlModal');
+        const closeCurlModalBtn = document.getElementById('closeCurlModal');
+        const closeCurlBtn = document.getElementById('closeCurlBtn');
+        const curlBtns = document.querySelectorAll('.btn-curl');
+        const copyCurlBtn = document.getElementById('copyCurlBtn');
+        const curlCode = document.getElementById('curlCode');
+
+        curlBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                curlModal.style.display = 'block';
+            });
+        });
+
+        closeCurlModalBtn.addEventListener('click', () => {
+            curlModal.style.display = 'none';
+        });
+
+        closeCurlBtn.addEventListener('click', () => {
+            curlModal.style.display = 'none';
+        });
+
+        copyCurlBtn.addEventListener('click', () => {
+            const textToCopy = curlCode.textContent;
+            const copyText = copyCurlBtn.querySelector('.copy-text');
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyCurlBtn.classList.add('copied');
+                copyText.textContent = 'Copied!';
+
+                setTimeout(() => {
+                    copyCurlBtn.classList.remove('copied');
+                    copyText.textContent = 'Copy';
+                }, 2000);
+            });
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === accessModal) {
+                accessModal.style.display = 'none';
+            }
+            if (e.target === credentialsModal) {
+                credentialsModal.style.display = 'none';
+            }
+            if (e.target === curlModal) {
+                curlModal.style.display = 'none';
+            }
+        });
+
+        continueBtn.addEventListener('click', () => {
+            const slaTier = document.getElementById('slaTier').value;
+            const appName = document.getElementById('appName').value;
+
+            if (!slaTier) {
+                alert('Please select an SLA Tier');
+                return;
+            }
+            if (!appName) {
+                alert('Please enter a Client Application Name');
+                return;
+            }
+
+            accessModal.style.display = 'none';
+            credentialsModal.style.display = 'block';
+        });
+
+        // Copy functionality
+        const copyBtns = document.querySelectorAll('.copy-btn');
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-copy');
+                const input = document.getElementById(targetId);
+                const copyText = btn.querySelector('.copy-text');
+
+                input.select();
+                document.execCommand('copy');
+
+                btn.classList.add('copied');
+                copyText.textContent = 'Copied!';
+
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    copyText.textContent = 'Copy';
+                }, 2000);
+            });
+        });
+
+        // Filtering functionality
+        const filterState = {
+            search: '',
+            provider: 'all',
+            routing: 'all',
+            status: 'all'
+        };
+
+        const elements = {
+            searchInput: document.getElementById('searchInput'),
+            providerSelect: document.getElementById('providerFilter'),
+            routingSelect: document.getElementById('routingFilter'),
+            statusSelect: document.getElementById('statusFilter'),
+            clearBtn: document.getElementById('clearFiltersBtn'),
+            clearLink: document.getElementById('clearFromMessage'),
+            tableRows: document.querySelectorAll('#tableView tbody tr'),
+            cardItems: document.querySelectorAll('.proxy-card'),
+            noResultsMsg: document.getElementById('noResults')
+        };
+
+        function getRowData(row) {
+            const cells = row.querySelectorAll('td');
+            const proxyName = cells[0].textContent.trim();
+            const providerTags = cells[1].querySelectorAll('.provider-tag');
+            const providers = Array.from(providerTags).map(tag => tag.textContent.trim());
+            const routing = cells[2].textContent.trim();
+            const statusBadge = cells[3].querySelector('.badge');
+            const status = statusBadge ? statusBadge.textContent.trim() : '';
+            return { proxyName, providers, routing, status };
+        }
+
+        function getCardData(card) {
+            return {
+                proxyName: card.dataset.proxyName,
+                providers: card.dataset.providers.split(','),
+                routing: card.dataset.routing,
+                status: card.dataset.status
+            };
+        }
+
+        function matchesFilters(data) {
+            const searchTerm = filterState.search.toLowerCase().trim();
+            const matchesSearch = !searchTerm || data.proxyName.toLowerCase().includes(searchTerm);
+            const matchesProvider = filterState.provider === 'all' || data.providers.includes(filterState.provider);
+            const matchesRouting = filterState.routing === 'all' || data.routing === filterState.routing;
+            const matchesStatus = filterState.status === 'all' || data.status === filterState.status;
+            return matchesSearch && matchesProvider && matchesRouting && matchesStatus;
+        }
+
+        function applyFilters() {
+            let visibleCount = 0;
+
+            // Filter table rows
+            elements.tableRows.forEach(row => {
+                const rowData = getRowData(row);
+                const isMatch = matchesFilters(rowData);
+                if (isMatch) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Filter cards
+            elements.cardItems.forEach(card => {
+                const cardData = getCardData(card);
+                const isMatch = matchesFilters(cardData);
+                if (isMatch) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            updateNoResultsMessage(visibleCount);
+            updateClearButtonVisibility();
+        }
+
+        function updateNoResultsMessage(visibleCount) {
+            elements.noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        function updateClearButtonVisibility() {
+            const hasActiveFilters =
+                filterState.search !== '' ||
+                filterState.provider !== 'all' ||
+                filterState.routing !== 'all' ||
+                filterState.status !== 'all';
+            elements.clearBtn.style.display = hasActiveFilters ? 'block' : 'none';
+        }
+
+        function resetFilters() {
+            filterState.search = '';
+            filterState.provider = 'all';
+            filterState.routing = 'all';
+            filterState.status = 'all';
+            elements.searchInput.value = '';
+            elements.providerSelect.value = 'all';
+            elements.routingSelect.value = 'all';
+            elements.statusSelect.value = 'all';
+            applyFilters();
+        }
+
+        elements.searchInput.addEventListener('input', (e) => {
+            filterState.search = e.target.value;
+            applyFilters();
+        });
+
+        elements.providerSelect.addEventListener('change', (e) => {
+            filterState.provider = e.target.value;
+            applyFilters();
+        });
+
+        elements.routingSelect.addEventListener('change', (e) => {
+            filterState.routing = e.target.value;
+            applyFilters();
+        });
+
+        elements.statusSelect.addEventListener('change', (e) => {
+            filterState.status = e.target.value;
+            applyFilters();
+        });
+
+        elements.clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetFilters();
+        });
+
+        elements.clearLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetFilters();
+        });
+
+        updateClearButtonVisibility();
+
+        // ========== MODELS PAGE FUNCTIONALITY ==========
+
+        // Page navigation
+        const exploreCatalogBtn = document.getElementById('exploreCatalogBtn');
+        const exploreModelsBtn = document.getElementById('exploreModelsBtn');
+        const viewExpensesBtn = document.getElementById('viewExpensesBtn');
+        const backToCatalogBtn = document.getElementById('backToCatalog');
+        const backFromExpensesBtn = document.getElementById('backFromExpenses');
+        const catalogSection = document.getElementById('catalog');
+        const modelsPage = document.getElementById('modelsPage');
+        const expensesPage = document.getElementById('expensesPage');
+
+        function showCatalog() {
+            catalogSection.style.display = 'block';
+            modelsPage.style.display = 'none';
+            expensesPage.style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        function showModels() {
+            catalogSection.style.display = 'none';
+            modelsPage.style.display = 'block';
+            expensesPage.style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        function showExpenses() {
+            catalogSection.style.display = 'none';
+            modelsPage.style.display = 'none';
+            expensesPage.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        exploreCatalogBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showCatalog();
+        });
+
+        exploreModelsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showModels();
+        });
+
+        viewExpensesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showExpenses();
+        });
+
+        backToCatalogBtn.addEventListener('click', () => {
+            showCatalog();
+        });
+
+        backFromExpensesBtn.addEventListener('click', () => {
+            showCatalog();
+        });
+
+        // Models filtering
+        const modelsSearchInput = document.getElementById('modelsSearch');
+        const modelsSortSelect = document.getElementById('modelsSort');
+        const modelsGrid = document.getElementById('modelsGrid');
+        const modelCards = modelsGrid.querySelectorAll('.model-card');
+        const modelsCount = document.getElementById('modelsCount');
+        const noModelsResults = document.getElementById('noModelsResults');
+        const modelFilterCheckboxes = document.querySelectorAll('.model-filter-checkbox');
+        const clearAllModelFiltersBtn = document.getElementById('clearAllModelFilters');
+        const clearModelFiltersFromMessage = document.getElementById('clearModelFiltersFromMessage');
+
+        let modelsFilterState = {
+            search: '',
+            providers: new Set(['OpenAI', 'Google', 'Anthropic']),
+            capabilities: new Set(),
+            contextSizes: new Set()
+        };
+
+        function getModelCardData(card) {
+            return {
+                provider: card.dataset.provider,
+                capabilities: card.dataset.capabilities.split(','),
+                context: card.dataset.context,
+                price: parseFloat(card.dataset.price),
+                title: card.querySelector('.model-card-title').textContent.toLowerCase(),
+                description: card.querySelector('.model-card-description').textContent.toLowerCase()
+            };
+        }
+
+        function matchesModelFilters(data) {
+            // Search term
+            const searchTerm = modelsFilterState.search.toLowerCase().trim();
+            const matchesSearch = !searchTerm ||
+                data.title.includes(searchTerm) ||
+                data.description.includes(searchTerm);
+
+            // Provider filter
+            const matchesProvider = modelsFilterState.providers.size === 0 ||
+                modelsFilterState.providers.has(data.provider);
+
+            // Capabilities filter
+            const matchesCapability = modelsFilterState.capabilities.size === 0 ||
+                Array.from(modelsFilterState.capabilities).some(cap => data.capabilities.includes(cap));
+
+            // Context size filter
+            const matchesContext = modelsFilterState.contextSizes.size === 0 ||
+                modelsFilterState.contextSizes.has(data.context);
+
+            return matchesSearch && matchesProvider && matchesCapability && matchesContext;
+        }
+
+        function sortModelCards(cards, sortBy) {
+            return Array.from(cards).sort((a, b) => {
+                const dataA = getModelCardData(a);
+                const dataB = getModelCardData(b);
+
+                switch(sortBy) {
+                    case 'price-low':
+                        return dataA.price - dataB.price;
+                    case 'price-high':
+                        return dataB.price - dataA.price;
+                    case 'newest':
+                    case 'popular':
+                    default:
+                        return 0; // Keep original order
+                }
+            });
+        }
+
+        function applyModelFilters() {
+            let visibleCount = 0;
+            const sortedCards = sortModelCards(modelCards, modelsSortSelect.value);
+
+            // Clear grid
+            modelsGrid.innerHTML = '';
+
+            // Filter and re-add cards
+            sortedCards.forEach(card => {
+                const data = getModelCardData(card);
+                const isMatch = matchesModelFilters(data);
+
+                if (isMatch) {
+                    modelsGrid.appendChild(card);
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Update count
+            modelsCount.textContent = `${visibleCount} model${visibleCount !== 1 ? 's' : ''}`;
+
+            // Show/hide no results message
+            if (visibleCount === 0) {
+                noModelsResults.style.display = 'block';
+                modelsGrid.style.display = 'none';
+            } else {
+                noModelsResults.style.display = 'none';
+                modelsGrid.style.display = 'grid';
+            }
+        }
+
+        // Search input
+        modelsSearchInput.addEventListener('input', (e) => {
+            modelsFilterState.search = e.target.value;
+            applyModelFilters();
+        });
+
+        // Sort select
+        modelsSortSelect.addEventListener('change', () => {
+            applyModelFilters();
+        });
+
+        // Checkbox filters
+        modelFilterCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const filterType = e.target.dataset.filter;
+                const value = e.target.value;
+
+                if (filterType === 'provider') {
+                    if (e.target.checked) {
+                        modelsFilterState.providers.add(value);
+                    } else {
+                        modelsFilterState.providers.delete(value);
+                    }
+                } else if (filterType === 'capability') {
+                    if (e.target.checked) {
+                        modelsFilterState.capabilities.add(value);
+                    } else {
+                        modelsFilterState.capabilities.delete(value);
+                    }
+                } else if (filterType === 'context') {
+                    if (e.target.checked) {
+                        modelsFilterState.contextSizes.add(value);
+                    } else {
+                        modelsFilterState.contextSizes.delete(value);
+                    }
+                }
+
+                applyModelFilters();
+            });
+        });
+
+        // Clear all filters
+        function clearAllModelFilters() {
+            modelsFilterState = {
+                search: '',
+                providers: new Set(['OpenAI', 'Google', 'Anthropic']),
+                capabilities: new Set(),
+                contextSizes: new Set()
+            };
+
+            modelsSearchInput.value = '';
+            modelFilterCheckboxes.forEach(checkbox => {
+                if (checkbox.dataset.filter === 'provider') {
+                    checkbox.checked = true;
+                } else {
+                    checkbox.checked = false;
+                }
+            });
+
+            applyModelFilters();
+        }
+
+        clearAllModelFiltersBtn.addEventListener('click', clearAllModelFilters);
+        clearModelFiltersFromMessage.addEventListener('click', (e) => {
+            e.preventDefault();
+            clearAllModelFilters();
+        });
+
+        // Initialize models count
+        applyModelFilters();
+    </script>
+</body>
+</html>
